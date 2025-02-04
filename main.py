@@ -105,7 +105,7 @@ class MyAppApp(App):
         f_lay = FloatLayout(size_hint=(1, None), height=box.height, width=Window.width)
         f_lay.add_widget(box)
         Window.bind(size=update_height_float)
-        Clock.schedule_interval(lambda x: update_height_float(1,1), 0.5)
+        Clock.schedule_once(lambda x: update_height_float(1,1))
         Window.bind(size=update_box_position)
         return f_lay
         
@@ -122,7 +122,7 @@ class MyAppApp(App):
         self.msg_box.add_widget(self.msg_grid)
         for i in range(20):
             a = i%2==1
-            msg = self.create_rounded_label(f"Rishabh{i}"*10, self_send=a)
+            msg = self.create_rounded_label(f"Rishabh adasd dasd {i}\n"*10, self_send=a)
             self.msg_grid.add_widget(msg)
             
         
