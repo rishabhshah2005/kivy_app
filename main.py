@@ -13,9 +13,8 @@ import time
 
 class MyAppApp(App):
         
-    def create_rounded_label(self, text, name="default", width=400, self_send=False):
-        p_hint = {'x': (Window.width-width)/Window.width, 'y':0} if self_send else {'x': 0, 'y': 0}
-        box = BoxLayout(orientation='vertical', size_hint=(None, None), width=width, pos_hint=p_hint)
+    def create_rounded_label(self, text, name="default", width=300, self_send=False):
+        
         
         
         def decide_col():
@@ -59,6 +58,8 @@ class MyAppApp(App):
         l.bind(texture_size=l.setter("size"))
         l_name.bind(texture_size=l_name.setter("size"))
 
+
+
         # Adjust box size dynamically based on labels
         def update_box_size(instance, value):
             box.height = l_name.height + l.height  # Total height of both labels
@@ -83,12 +84,14 @@ class MyAppApp(App):
 
         
         def update_height_float(instance, value):
-            f_lay.height = box.height
+            f_lay.height = l_name.height + l.height
+            f_lay.size_hint_min_x = 1
         def update_box_position(instance, height):
             if self_send:
                 box.pos_hint = {'x':(Window.width-width)/Window.width, 'y':0}
             else:
                 box.pos_hint = {'x':0, 'y':0}
+            
                 
         l.bind(size=update_box_size)
         l_name.bind(size=update_box_size)
@@ -96,14 +99,17 @@ class MyAppApp(App):
         l.bind(pos=update_rect, size=update_rect)
         l_name.bind(pos=update_rect_name, size=update_rect_name)
 
+        p_hint = {'x': (Window.width-width)/Window.width, 'y':0} if self_send else {'x': 0, 'y':0}
+        box = BoxLayout(orientation='vertical', size_hint=(None, None), width=width, pos_hint=p_hint)
+
         # Add labels to the box
         box.add_widget(l_name)
         box.add_widget(l)
         
-        f_lay = FloatLayout(size_hint=(1, None), height=box.height)
+        f_lay = FloatLayout(size_hint=(1, None), height=box.height, width=Window.width)
         f_lay.add_widget(box)
-        f_lay.bind(size=update_height_float)
-        f_lay.height = box.height
+        Window.bind(size=update_height_float)
+        update_height_float(1,1)
         Window.bind(size=update_box_position)
         return f_lay
         
@@ -119,7 +125,7 @@ class MyAppApp(App):
         self.msg_grid.bind(minimum_height=self.msg_grid.setter('height'))
         self.msg_box.add_widget(self.msg_grid)
         for i in range(20):
-            a = i%2==0
+            a = i%2==1
             msg = self.create_rounded_label(f"Rishabh {i}"*10, self_send=a)
             self.msg_grid.add_widget(msg)
             
@@ -133,7 +139,7 @@ class MyAppApp(App):
         self.inp_box.add_widget(self.send_btn)
         
         self.grid.add_widget(self.inp_box)
-        
+
         return self.grid
         
 
