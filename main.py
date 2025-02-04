@@ -9,13 +9,11 @@ from kivy.core.window import Window
 from kivy.uix.image import Image
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Color, RoundedRectangle
-import time
+from kivy.clock import Clock
 
 class MyAppApp(App):
         
-    def create_rounded_label(self, text, name="default", width=300, self_send=False):
-        
-        
+    def create_rounded_label(self, text, name="default", width=400, self_send=False):
         
         def decide_col():
             if self_send:
@@ -58,8 +56,6 @@ class MyAppApp(App):
         l.bind(texture_size=l.setter("size"))
         l_name.bind(texture_size=l_name.setter("size"))
 
-
-
         # Adjust box size dynamically based on labels
         def update_box_size(instance, value):
             box.height = l_name.height + l.height  # Total height of both labels
@@ -78,14 +74,14 @@ class MyAppApp(App):
             l.rect.pos = l.pos
             l.rect.size = l.size
 
+
         def update_rect_name(instance, value):
             l_name.rect.pos = l_name.pos
             l_name.rect.size = l_name.size
-
         
         def update_height_float(instance, value):
-            f_lay.height = l_name.height + l.height
-            f_lay.size_hint_min_x = 1
+            f_lay.height = box.height
+            
         def update_box_position(instance, height):
             if self_send:
                 box.pos_hint = {'x':(Window.width-width)/Window.width, 'y':0}
@@ -109,7 +105,7 @@ class MyAppApp(App):
         f_lay = FloatLayout(size_hint=(1, None), height=box.height, width=Window.width)
         f_lay.add_widget(box)
         Window.bind(size=update_height_float)
-        update_height_float(1,1)
+        Clock.schedule_interval(lambda x: update_height_float(1,1), 0.5)
         Window.bind(size=update_box_position)
         return f_lay
         
@@ -126,7 +122,7 @@ class MyAppApp(App):
         self.msg_box.add_widget(self.msg_grid)
         for i in range(20):
             a = i%2==1
-            msg = self.create_rounded_label(f"Rishabh {i}"*10, self_send=a)
+            msg = self.create_rounded_label(f"Rishabh{i}"*10, self_send=a)
             self.msg_grid.add_widget(msg)
             
         
