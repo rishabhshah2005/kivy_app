@@ -8,7 +8,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
-<<<<<<< HEAD
 from kivy.graphics import Color, RoundedRectangle, Rectangle
 from kivy.clock import Clock
 from kivy.config import Config
@@ -16,10 +15,6 @@ from kivy.config import Config
 Config.set('graphics', 'width', '720')
 Config.set('graphics', 'height', '300')
 Config.set('graphics', 'resizable', '1')
-=======
-from kivy.graphics import Color, RoundedRectangle
-from kivy.clock import Clock
->>>>>>> cf40aef95f68f33782489ad8e269030105cd1ec1
 
 class MyAppApp(App):
     
@@ -120,10 +115,6 @@ class MyAppApp(App):
             else:
                 box.pos_hint = {'x':0, 'y':0}
             
-<<<<<<< HEAD
-=======
-                
->>>>>>> cf40aef95f68f33782489ad8e269030105cd1ec1
         l.bind(size=update_box_size)
         l_name.bind(size=update_box_size)
         
