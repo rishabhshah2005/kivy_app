@@ -5,20 +5,22 @@ from kivy.uix.widget import Widget
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.uix.floatlayout import FloatLayout
 from kivy.graphics import Color, RoundedRectangle, Rectangle
 from kivy.clock import Clock
 from kivy.config import Config
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 Config.set('graphics', 'width', '720')
 Config.set('graphics', 'height', '300')
 Config.set('graphics', 'resizable', '1')
 
-class MyAppApp(App):
+class MsgWindow(Screen):
     
-    def create_upper_tab(self):
+    def create_upper_tab(self, x: Widget):
         box = BoxLayout(orientation='horizontal', size_hint=(1, None), pos=(0, Window.height), height=Window.height*0.1)
         leave_button = Button(
             text="Leave Server",
@@ -26,6 +28,12 @@ class MyAppApp(App):
             background_color=[1,0,0,1],
             color=[0,0,0,1],
         )
+        
+        def back_to_home(instance):
+            self.manager.current = 'home'
+            self.sm.remove_widget(self)
+        
+        leave_button.bind(on_press=back_to_home)
         filler_button = Button(
             size_hint=(0.7,1),
             disabled=True,
@@ -136,12 +144,14 @@ class MyAppApp(App):
         return f_lay
            
     
-    def build(self):
+    def __init__(self,sm, ip=None, port=None, **kwargs):
+        super(MsgWindow, self).__init__(**kwargs)
+        self.sm=sm
         self.grid = GridLayout(cols=1, size_hint_y=None)
         self.grid.bind(minimum_height=self.grid.setter('height'))
         
         # Adding the leave tab
-        self.upper_tab = self.create_upper_tab()
+        self.upper_tab = self.create_upper_tab(self.grid)
         
         def update_upper_tab(instance, value):
             self.upper_tab.height = Window.height*0.1
@@ -185,7 +195,58 @@ class MyAppApp(App):
         Window.bind(size=update_layout)
         Clock.schedule_once(lambda x: update_layout(1,1))
         Clock.schedule_once(lambda x: update_upper_tab(1,1))
-        return self.grid
+        self.add_widget(self.grid)
+        print(ip)
+        print(port)
+        
         
 
-MyAppApp().run()
+class MainScreen(Screen):
+    def __init__(self,sm, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
+        rlo = RelativeLayout()
+        l1 = Label(
+            text="Enter IP address", size_hint=(.2, .1),
+            pos_hint={'x': .2, 'y': .75},
+            font_size='23sp',
+        )
+        rlo.add_widget(l1)
+        t1 = TextInput(
+            size_hint=(.4, .1), pos_hint={'x': .3, 'y': .65},
+            font_size='23sp',
+        )
+        rlo.add_widget(t1)
+        l2 = Label(
+            text="Enter Port", size_hint=(.2, .1),
+            pos_hint={'x': .2, 'y': .55},
+            font_size='23sp',
+        )
+        rlo.add_widget(l2)
+        t2 = TextInput(
+            size_hint=(.4, .1),
+            pos_hint={'x': .3, 'y': .45},
+            font_size='23sp',
+        )
+        rlo.add_widget(t2)
+        b1 = Button(
+            text='Join', size_hint=(.2, .1),
+            pos_hint={'center_x': .5, 'center_y': .09},
+            font_size='30sp',
+        )
+        def get_details_and_redirect(instance):
+            ip = t1.text
+            port = t2.text
+            sm.add_widget(MsgWindow(sm,ip=ip, port=port, name='msgs'))
+            self.manager.current='msgs'
+            
+        b1.bind(on_press=get_details_and_redirect)
+        rlo.add_widget(b1)
+        self.add_widget(rlo)
+
+class Main(App):
+    def build(self):
+        sm = ScreenManager()
+        sm.add_widget(MainScreen(sm=sm,name='home'))
+        return sm
+    
+Main().run()
