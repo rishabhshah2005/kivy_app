@@ -353,7 +353,7 @@ class ServerScreen(Screen):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             # s.settimeout(1)
             try:
-                ip = '127.0.0.1'
+                ip = socket.gethostbyname_ex(socket.gethostname())[-1][-1]
                 port = int(t2.text)
                 name = t3.text
                 if name.lower()=="server":

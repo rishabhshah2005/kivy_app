@@ -2,6 +2,8 @@ import socket
 import threading
 
 def recieve(s: socket.socket, lst: list, event: threading.Event=None, print_flag=False, on_end: callable=None):
+    if event:
+        event.clear()
     while not (event.is_set() if event else False):
         try:
             msg = s.recv(1024).decode('utf-8')
