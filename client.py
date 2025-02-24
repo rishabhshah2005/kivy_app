@@ -1,14 +1,21 @@
 import socket
 import threading
 
-def recieve(s: socket.socket, lst: list, event: threading.Event=None, print_flag=False):
+def recieve(s: socket.socket, lst: list, event: threading.Event=None, print_flag=False, on_end: callable=None):
     while not (event.is_set() if event else False):
         try:
             msg = s.recv(1024).decode('utf-8')
             lst.append(msg)
             if print_flag:
                 print(msg)
+        except ConnectionResetError:
+            if on_end!=None:
+                on_end()
+            if event:
+                event.set()
+            break
         except Exception as e:
+            print(type(e))
             print("Exception in receive")
             if event:
                 event.set()
@@ -49,8 +56,13 @@ if __name__ == "__main__":
 
     name = input("Enter name: ")
     s.send(name.encode('utf-8'))
-    msgs = []
-    running = False
-    t = threading.Thread(target=recieve, args=(s,msgs, running, True))
-    t.start()
-    send_msg(s)
+    answer = s.recv(1024).decode()
+    answer = answer.split(":")
+    if answer[0]=="refused":
+        print("Name already taken!!")
+    else:
+        msgs = []
+        running = False
+        t = threading.Thread(target=recieve, args=(s,msgs, running, True))
+        t.start()
+        send_msg(s)
