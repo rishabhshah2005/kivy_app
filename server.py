@@ -5,9 +5,9 @@ def server_send_msg(msg: bytes, name: str, clients: dict):
     try:
         for conn in clients:
             conn.send((name+":").encode()+msg)
-            print("sending to", conn)
+            # print("sending to", conn)
     except Exception as e:
-        print("exception in send")
+        # print("exception in send")
         print(e)
 
 def incoming(conn: socket.socket, name: str, clients: dict):
@@ -17,10 +17,10 @@ def incoming(conn: socket.socket, name: str, clients: dict):
             server_send_msg(data, name, clients=clients)
             del data
         except Exception as e:
-            print("exception in incoming")
+            # print("exception in incoming")
             print(e)
             clients.__delitem__(conn)
-            print(name, "left")
+            # print(name, "left")
             server_send_msg(f"{name} left".encode(), "Server", clients=clients)
             conn.close()
             break
@@ -38,7 +38,7 @@ def receive(host, port, thread_event: threading.Event = None):
     while thread_event.is_set():
         try:
             conn, addr = s.accept()
-            print("acc")
+            # print("acc")
             name: str = conn.recv(1024).decode('utf-8')
             if name in clients.values():
                 conn.send("refused:name already taken!".encode())
@@ -51,11 +51,11 @@ def receive(host, port, thread_event: threading.Event = None):
                 server_send_msg(f"{name}({addr[0]}) has connected!!".encode(), "Server", clients=clients)
                 t = threading.Thread(target=incoming, args=(conn, name, clients))
                 t.start()
-                print("Thread started")
+                # print("Thread started")
         except socket.timeout:
             continue
         except Exception as e:
-            print("exception in recv")
+            # print("exception in recv")
             print(e)
             s.close()
             break

@@ -18,7 +18,7 @@ def recieve(s: socket.socket, lst: list, event: threading.Event=None, print_flag
             break
         except Exception as e:
             print(type(e))
-            print("Exception in receive")
+            # print("Exception in receive")
             if event:
                 event.set()
             print(e)
@@ -46,11 +46,11 @@ def send_msg(s: socket.socket, msg: str=None):
             s.send(msg.encode('utf-8'))
         except Exception as e:
             print(e)
-            print("Exception in send_msg")
+            # print("Exception in send_msg")
             s.close()
 
 if __name__ == "__main__":
-    host = "127.0.0.1"
+    host = "192.168.29.33"
     port = 5555
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

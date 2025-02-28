@@ -465,7 +465,7 @@ class MainScreen(Screen):
         
         def get_details_and_redirect(instance):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # s.settimeout(1)
+            s.settimeout(3)
             try:
                 ip = t1.text
                 port = int(t2.text)
@@ -480,12 +480,13 @@ class MainScreen(Screen):
                 self.create_popup("ValueError", "Enter Proper Values")
                 print(e)
             except WindowsError as e:
-                self.create_popup("WindowsError", "Host Not Found", dur=5)
+                self.create_popup("WindowsError", "Host Not Found", dur=6)
                 print(e)
             except Exception as e:
                 self.create_popup("Error", "An error occured")
                 print(e)
             else:
+                s.settimeout(None)
                 s.send(name.encode())
                 answer = s.recv(1024).decode()
                 answer = answer.split(":")
